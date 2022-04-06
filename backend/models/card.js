@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const productSchema = new mongoose.Schema({
+const cardSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -13,15 +13,16 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  quantity: {
-    type: Number,
-    default: 1,
-    min: 1,
-    max: 100,
-  },
-  description: {
+  cardNumber: {
     type: String,
-    default: "",
+    required: true,
+  },
+  expirationDate: {
+    type: Number,
+    required: true,
+  },
+  lastUpdate: {
+    type: Date,
   },
   image: {
     type: String,
@@ -32,19 +33,26 @@ const productSchema = new mongoose.Schema({
     ref: "Category",
     required: true,
   },
-  isFeatured: {
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  isForSale: {
     type: Boolean,
     default: false,
   },
   createdAt: Date,
+  calculatedPrice: Number,
+  precentageSaved: Number,
 });
 
-productSchema.virtual("id").get(function () {
+cardSchema.virtual("id").get(function () {
   return this._id.toHexString();
 });
 
-productSchema.set("toJSON", {
+cardSchema.set("toJSON", {
   virtuals: true,
 });
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model("Card", cardSchema);

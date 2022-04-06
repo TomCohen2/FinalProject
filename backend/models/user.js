@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   createdAt: Date,
+  lastUpdate: Date,
+  coins: Number,
+  rating: Number,
+  document: String,
 });
 
 userSchema.virtual("id").get(function () {

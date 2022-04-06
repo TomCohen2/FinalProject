@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const mongoose = require("mongoose");
-const Product = require("./models/product");
-const productsRouter = require("./routers/products");
+const Card = require("./models/card");
+const cardsRouter = require("./routers/cards");
 const cors = require("cors");
 const authJwt = require("./helpers/jwt");
 require("dotenv/config");
@@ -26,7 +26,7 @@ const api = process.env.API_URL;
 const CONNECTION_URL = process.env.CONNECTION_URL;
 
 //use routes
-app.use(`${api}/products`, productsRouter);
+app.use(`${api}/cards`, cardsRouter);
 app.use(`${api}/categories`, categoriesRoutes);
 app.use(`${api}/users`, usersRoutes);
 app.use(`${api}/orders`, ordersRoutes);

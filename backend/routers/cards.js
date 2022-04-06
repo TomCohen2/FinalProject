@@ -1,28 +1,45 @@
 const express = require("express");
 const router = express.Router();
-const Product = require("../models/product");
+const Card = require("../models/card");
 const Category = require("../models/category");
 const mongoose = require("mongoose");
 
 router.get(`/`, async (req, res) => {
-  const productsList = await Product.find().populate("category");
-  if (!productsList) {
+  const cardsList = await Card.find().populate("category");
+  if (!cardsList) {
     res.status(500).json({
       success: false,
     });
   }
-  res.send(productsList);
+  res.send(cardsList);
 });
 
 router.get("/:id", async (req, res) => {
-  const product = await Product.findById(req.params.id);
-  if (!product) {
+  const card = await Card.findById(req.params.id).populate("owner");
+  const cardCalculatedPrice = card.price - 5;
+  card.calculatedPrice = cardCalculatedPrice;
+  const cardPrecentageSaved = (1 - card.calculatedPrice / card.value) * 100;
+  const result = cardPrecentageSaved.toFixed(2) + "%";
+  card.precentageSaved = result;
+
+  if (!card) {
     res.status(500).json({
       success: false,
-      message: "Product not found",
+      message: "card not found",
     });
   }
-  res.send(product);
+  res.send(card);
+});
+
+router.get("/pricing/:id", async (req, res) => {
+  const card = await Card.findById(req.params.id);
+  if (!card) {
+    res.status(500).json({
+      success: false,
+      message: "card not found",
+    });
+  }
+  res.send(card.price);
 });
 
 router.post(`/`, async (req, res) => {
@@ -31,29 +48,34 @@ router.post(`/`, async (req, res) => {
       .status(400)
       .send("Category not found. Please add a category first.");
   }
+  if (!mongoose.Types.ObjectId.isValid(req.body.owner)) {
+    return res.status(400).send("Owner not found. Please add a user first.");
+  }
   const category = await Category.findById(req.body.category);
   if (!category) {
     return res
       .status(400)
       .send("Category not found. Please add a category first.");
   }
-  let product = new Product({
+  let card = new Card({
     name: req.body.name,
     price: req.body.price,
     value: req.body.value,
-    quantity: req.body.quantity,
-    description: req.body.description,
+    cardNumber: req.body.cardNumber,
     image: req.body.image,
     category: req.body.category,
-    isFeatured: req.body.isFeatured,
+    owner: req.body.owner,
+    isForSale: req.body.isForSale,
     createdAt: Date.now(),
+    lastUpdate: Date.now(),
+    expirationDate: req.body.expirationDate,
   });
 
-  product = await product.save();
-  if (!product) {
-    return res.status(500).send("Error creating product");
+  card = await card.save();
+  if (!card) {
+    return res.status(500).send("Error creating card");
   }
-  return res.status(201).send(product);
+  return res.status(201).send(card);
 });
 
 router.put(`/:id`, async (req, res) => {
@@ -69,57 +91,58 @@ router.put(`/:id`, async (req, res) => {
       .status(400)
       .send("Category not found. Please add a category first.");
   }
-  const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+  const card = await Card.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
-  if (!product) {
+
+  if (!card) {
     res.status(500).json({
       success: false,
-      message: "Product not found",
+      message: "card not found",
     });
   }
 
-  res.send(product);
+  res.send(card);
 });
 
 router.delete(`/:id`, (req, res) => {
-  Product.findByIdAndDelete(req.params.id, (err, product) => {
+  Card.findByIdAndDelete(req.params.id, (err, card) => {
     if (err) {
       return res.status(500).send(err);
     }
-    return res.status(200).send(product);
+    return res.status(200).send(card);
   });
 });
 
 router.get("/get/count", async (req, res) => {
-  const productCount = await Product.countDocuments();
-  if (!productCount) {
+  const cardCount = await Card.countDocuments();
+  if (!cardCount) {
     res.status(500).json({
       success: false,
       message: "Count not found",
     });
   }
-  res.send({ productCount: productCount });
+  res.send({ cardCount: cardCount });
 });
 
 router.get("/get/featured", async (req, res) => {
-  const productsList = await Product.find({ isFeatured: true });
-  if (!productsList) {
+  const cardsList = await Card.find({ isFeatured: true });
+  if (!cardsList) {
     res.status(500).json({
       success: false,
     });
   }
-  res.send(productsList);
+  res.send(cardsList);
 });
 
 router.get("/get/:category", async (req, res) => {
-  const productsList = await Product.find({ category: req.params.category });
-  if (!productsList) {
+  const cardsList = await Card.find({ category: req.params.category });
+  if (!cardsList) {
     res.status(500).json({
       success: false,
     });
   }
-  res.send(productsList);
+  res.send(cardsList);
 });
 
 module.exports = router;

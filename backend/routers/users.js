@@ -35,11 +35,50 @@ router.post("/", async (req, res) => {
     address: req.body.address,
     phone: req.body.phone,
     isAdmin: req.body.isAdmin,
+    lastUpdate: Date.now(),
   });
   user = await user.save();
   if (!user) {
     return res.status(500).send("Error creating user");
   }
+  return res.status(201).send(user);
+});
+
+router.put("/:id", async (req, res) => {
+  let user = await User.findById(req.params.id);
+  if (!user) {
+    return res.status(500).send("User not found");
+  }
+  const currentDetails = {
+    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    address: user.address,
+    phone: user.phone,
+    isAdmin: user.isAdmin,
+  };
+  user = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+      username: currentDetails.username,
+      firstName: req.body.firstName || currentDetails.firstName,
+      lastName: req.body.lastName || currentDetails.lastName,
+      email: currentDetails.email,
+      password:
+        bcrypt.hashSync(req.body.password, 10) || currentDetails.password,
+      address: req.body.address || currentDetails.address,
+      phone: req.body.phone || currentDetails.phone,
+      isAdmin: req.body.isAdmin,
+      lastUpdate: Date.now(),
+    },
+    { new: true }
+  );
+
+  if (!user) {
+    return res.status(500).send("Error updating user");
+  }
+  user = await user.save();
   return res.status(201).send(user);
 });
 
@@ -61,6 +100,12 @@ router.post("/login", async (req, res) => {
     return res.status(200).send({
       user: user.email,
       token: token,
+      id: user._id,
+      isAdmin: user.isAdmin,
+      lastName: user.lastName,
+      firstName: user.firstName,
+      address: user.address,
+      phone: user.phone,
     });
   } else {
     return res.status(401).send("Invalid email or password");
