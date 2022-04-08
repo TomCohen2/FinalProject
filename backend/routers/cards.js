@@ -11,6 +11,7 @@ router.get(`/`, async (req, res) => {
       success: false,
     });
   }
+
   res.send(cardsList);
 });
 
@@ -31,16 +32,6 @@ router.get("/:id", async (req, res) => {
   res.send(card);
 });
 
-router.get("/pricing/:id", async (req, res) => {
-  const card = await Card.findById(req.params.id);
-  if (!card) {
-    res.status(500).json({
-      success: false,
-      message: "card not found",
-    });
-  }
-  res.send(card.price);
-});
 
 router.post(`/`, async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.body.category)) {
@@ -58,7 +49,6 @@ router.post(`/`, async (req, res) => {
       .send("Category not found. Please add a category first.");
   }
   let card = new Card({
-    name: req.body.name,
     price: req.body.price,
     value: req.body.value,
     cardNumber: req.body.cardNumber,
@@ -69,6 +59,7 @@ router.post(`/`, async (req, res) => {
     createdAt: Date.now(),
     lastUpdate: Date.now(),
     expirationDate: req.body.expirationDate,
+    isDeleted: false,
   });
 
   card = await card.save();
@@ -79,20 +70,19 @@ router.post(`/`, async (req, res) => {
 });
 
 router.put(`/:id`, async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.body.category)) {
-    return res
-      .status(400)
-      .send("Category not found. Please add a category first.");
-  }
   const category = await Category.findById(req.body.category);
 
-  if (!category) {
-    return res
-      .status(400)
-      .send("Category not found. Please add a category first.");
+  if (category) {
+    if (!mongoose.Types.ObjectId.isValid(req.body.category)) {
+      return res
+        .status(400)
+        .send("Category not found. Please add a category first.");
+    }
   }
+
+  req.body.lastUpdate = Date()
   const card = await Card.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
+    new: true
   });
 
   if (!card) {
@@ -105,15 +95,6 @@ router.put(`/:id`, async (req, res) => {
   res.send(card);
 });
 
-router.delete(`/:id`, (req, res) => {
-  Card.findByIdAndDelete(req.params.id, (err, card) => {
-    if (err) {
-      return res.status(500).send(err);
-    }
-    return res.status(200).send(card);
-  });
-});
-
 router.get("/get/count", async (req, res) => {
   const cardCount = await Card.countDocuments();
   if (!cardCount) {
@@ -123,26 +104,6 @@ router.get("/get/count", async (req, res) => {
     });
   }
   res.send({ cardCount: cardCount });
-});
-
-router.get("/get/featured", async (req, res) => {
-  const cardsList = await Card.find({ isFeatured: true });
-  if (!cardsList) {
-    res.status(500).json({
-      success: false,
-    });
-  }
-  res.send(cardsList);
-});
-
-router.get("/get/:category", async (req, res) => {
-  const cardsList = await Card.find({ category: req.params.category });
-  if (!cardsList) {
-    res.status(500).json({
-      success: false,
-    });
-  }
-  res.send(cardsList);
 });
 
 module.exports = router;

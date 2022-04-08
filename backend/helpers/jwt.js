@@ -14,6 +14,10 @@ function authJwt() {
         methods: ["GET", "OPTIONS"],
       },
       {
+        url: /\/api\/v1\/users(.*)/,
+        methods: ["GET", "OPTIONS"],
+      },
+      {
         url: /\/api\/v1\/test(.*)/,
         methods: ["GET", "OPTIONS"],
       },
@@ -22,13 +26,38 @@ function authJwt() {
         methods: ["GET", "OPTIONS"],
       },
       {
+        url: /\/api\/v1\/coinTransactions(.*)/,
+        methods: ["GET", "OPTIONS"],
+      },
+      {
+        url: /\/api\/v1\/cardTypes(.*)/,
+        methods: ["GET", "OPTIONS"],
+      },
+      {
+        url: /\/api\/v1\/cards(.*)/,
+        methods: ["PUT", "OPTIONS"],
+      },
+      {
         url: `${api}/users/login`,
+        methods: ["POST", "OPTIONS"],
+      },
+      {
+        url: `${api}/cards`,
         methods: ["POST", "OPTIONS"],
       },
       {
         url: `${api}/users/register`,
         methods: ["POST", "OPTIONS"],
       },
+      {
+        url: `${api}/coinTransactions`,
+        methods: ["POST", "OPTIONS"],
+      },
+      {
+        url: `${api}/cardTypes`,
+        methods: ["POST", "OPTIONS"],
+      },
+
     ],
   });
 }
