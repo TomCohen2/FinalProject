@@ -38,6 +38,10 @@ function authJwt() {
         methods: ["PUT", "OPTIONS"],
       },
       {
+        url: /\/api\/v1\/users(.*)/,
+        methods: ["PUT", "OPTIONS"],
+      },
+      {
         url: `${api}/users/login`,
         methods: ["POST", "OPTIONS"],
       },

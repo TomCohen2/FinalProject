@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
   rating: Number,
   profilePicture: String,
   document: String,
-  verfied:{
+  verified:{
     type: Boolean,
      default:false
     }

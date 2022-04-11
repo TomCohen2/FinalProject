@@ -37,7 +37,7 @@ router.post("/", async (req, res) => {
     latAndLong: req.body.latAndLong,
     phone: req.body.phone,
     isAdmin: req.body.isAdmin,
-    profilePicutre : req.body.profilePicutre,
+    profilePicture : "",
     coins: 0,
     rating: 0,
     document: "",
@@ -58,26 +58,35 @@ router.put("/:id", async (req, res) => {
     return res.status(500).send("User not found");
   }
   const currentDetails = {
-    username: user.username,
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
     address: user.address,
     phone: user.phone,
     isAdmin: user.isAdmin,
+    latAndLong: user.latAndLong,
+    coins: user.coins,
+    rating: user.rating,
+    profilePicture: user.profilePicture,
+    document: user.document,
+    verified: user.verified
   };
   user = await User.findByIdAndUpdate(
     req.params.id,
     {
-      username: currentDetails.username,
       firstName: req.body.firstName || currentDetails.firstName,
       lastName: req.body.lastName || currentDetails.lastName,
-      email: currentDetails.email,
-      password:
-        bcrypt.hashSync(req.body.password, 10) || currentDetails.password,
+      // email: currentDetails.email,
+      // password: bcrypt.hashSync(req.body.password, 10) || currentDetails.password,
       address: req.body.address || currentDetails.address,
       phone: req.body.phone || currentDetails.phone,
-      isAdmin: req.body.isAdmin,
+      latAndLong: req.body.latAndLong || currentDetails.latAndLong,
+      isAdmin: req.body.isAdmin || currentDetails.isAdmin,
+      coins: req.body.coins || currentDetails.coins,
+      rating: req.body.rating || currentDetails.rating ,
+      profilePicutre: req.body.profilePicture || currentDetails.profilePicture,
+      document: req.body.document || currentDetails.document,
+      verified: req.body.verified || currentDetails.verified,
       lastUpdate: Date.now(),
     },
     { new: true }
@@ -87,8 +96,32 @@ router.put("/:id", async (req, res) => {
     return res.status(500).send("Error updating user");
   }
   user = await user.save();
-  return res.status(201).send(user);
+  const token = jwt.sign(
+    { id: user._id, isAdmin: user.isAdmin },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1d",
+    });
+
+  return res.status(200).send({
+    email: user.email,
+    token: token,
+    id: user._id,
+    isAdmin: user.isAdmin,
+    lastName: user.lastName,
+    firstName: user.firstName,
+    address: user.address,
+    phone: user.phone,
+    latAndLong: user.latAndLong,
+    coins: user.coins,
+    rating: user.rating,
+    profilePicture: user.profilePicture,
+    document: user.document,
+    verified: user.verified
+  });
 });
+
+
 
 router.post("/login", async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
@@ -115,6 +148,12 @@ router.post("/login", async (req, res) => {
       firstName: user.firstName,
       address: user.address,
       phone: user.phone,
+      latAndLong: user.latAndLong,
+      coins: user.coins,
+      rating: user.rating,
+      profilePicutre: user.profilePicutre,
+      document: user.document,
+      verified: user.verified
     });
   } else {
     return res.status(401).send("Invalid email or password");

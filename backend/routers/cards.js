@@ -5,7 +5,7 @@ const Category = require("../models/category");
 const mongoose = require("mongoose");
 
 router.get(`/`, async (req, res) => {
-  const cardsList = await Card.find().populate("category");
+  const cardsList = await Card.find();
   if (!cardsList) {
     res.status(500).json({
       success: false,
@@ -16,7 +16,7 @@ router.get(`/`, async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const card = await Card.findById(req.params.id).populate("owner");
+  const card = await Card.findById(req.params.id);
   const cardCalculatedPrice = card.price - 5;
   card.calculatedPrice = cardCalculatedPrice;
   const cardPrecentageSaved = (1 - card.calculatedPrice / card.value) * 100;
@@ -29,30 +29,26 @@ router.get("/:id", async (req, res) => {
       message: "card not found",
     });
   }
-  res.send(card);
+  res.status(200).send(card);
 });
 
 
 router.post(`/`, async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.body.category)) {
+  console.log(req.body)
+  if (!mongoose.Types.ObjectId.isValid(req.body.cardType)) {
     return res
       .status(400)
-      .send("Category not found. Please add a category first.");
+      .send("CardType not found. Please add a Valid CardType first.");
   }
   if (!mongoose.Types.ObjectId.isValid(req.body.owner)) {
     return res.status(400).send("Owner not found. Please add a user first.");
   }
-  const category = await Category.findById(req.body.category);
-  if (!category) {
-    return res
-      .status(400)
-      .send("Category not found. Please add a category first.");
-  }
+
   let card = new Card({
     price: req.body.price,
     value: req.body.value,
     cardNumber: req.body.cardNumber,
-    category: req.body.category,
+    cardType: req.body.cardType,
     owner: req.body.owner,
     isForSale: req.body.isForSale,
     createdAt: Date.now(),
@@ -65,7 +61,14 @@ router.post(`/`, async (req, res) => {
   if (!card) {
     return res.status(500).send("Error creating card");
   }
-  return res.status(201).send(card);
+  //TODO REMOVE THIS AND MOVE TO FUNCTION
+  const cardCalculatedPrice = card.price - 5;
+  card.calculatedPrice = cardCalculatedPrice;
+  const cardPrecentageSaved = (1 - card.calculatedPrice / card.value) * 100;
+  const result = cardPrecentageSaved.toFixed(2) + "%";
+  card.precentageSaved = result;
+
+  return res.status(200).send(card);
 });
 
 router.put(`/:id`, async (req, res) => {

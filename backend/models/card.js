@@ -37,16 +37,11 @@ const cardSchema = new mongoose.Schema({
     required: true,
   },
 
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
-    required: true,
-  },
-
   isForSale: {
     type: Boolean,
     default: false,
   },
+  
   createdAt: Date,
   calculatedPrice: Number,
   precentageSaved: String,
