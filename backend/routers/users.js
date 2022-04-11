@@ -92,6 +92,7 @@ router.put("/:id", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
+  console.log(user);
   if (!user) {
     return res.status(401).send("Invalid email or password");
   }
@@ -106,7 +107,7 @@ router.post("/login", async (req, res) => {
     );
 
     return res.status(200).send({
-      user: user.email,
+      email: user.email,
       token: token,
       id: user._id,
       isAdmin: user.isAdmin,

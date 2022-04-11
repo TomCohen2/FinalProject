@@ -20,12 +20,13 @@ router.post(`/`, async (req, res) => {
       amount: req.body.amount,
       date: Date.now(),
     });
-  
+    
     coinTransactionSchema = await coinTransactionSchema.save();
     if (!coinTransactionSchema) {
       return res.status(500).send("Error creating coin Transaction");
     }
-    return res.status(201).send(coinTransactionSchema);
+
+    return res.status(200).send("Coin Transaction Created");
   });
 
   router.get(`/`, async (req, res) => {

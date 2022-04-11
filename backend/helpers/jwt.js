@@ -58,11 +58,11 @@ function authJwt() {
         methods: ["POST", "OPTIONS"],
       },
       {
-        url: `${api}/users/`,
+        url: `${api}/users`,
         methods: ["POST", "OPTIONS"],
       },
       {
-        url: `${api}/categories/`,
+        url: `${api}/categories`,
         methods: ["POST", "OPTIONS"],
       },
 
