@@ -52,7 +52,6 @@ router.post(`/`, async (req, res) => {
     price: req.body.price,
     value: req.body.value,
     cardNumber: req.body.cardNumber,
-    image: req.body.image,
     category: req.body.category,
     owner: req.body.owner,
     isForSale: req.body.isForSale,

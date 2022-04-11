@@ -25,20 +25,21 @@ const cardSchema = new mongoose.Schema({
     type: Date,
   },
 
-  image: {
-    type: String,
-    default: "",
-  },
-
-  category: {
+  cardType: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
+    ref: "CardType",
     required: true,
   },
 
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
+  },
+
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
     required: true,
   },
 

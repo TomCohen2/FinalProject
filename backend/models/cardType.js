@@ -5,10 +5,11 @@ const cardTypeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  category:    {
-      type: mongoose.Schema.Types.ObjectId,
+  categories:  {
+      type: Array,
       ref: "Category",
       required: true,
+      default: []
     },
 
   });

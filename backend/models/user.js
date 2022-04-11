@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-  },
   password: {
     type: String,
     required: true,
@@ -29,6 +25,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  latAndLong: {
+    type: String,
+    required: true,
+  },
   isAdmin: {
     type: Boolean,
     default: false,
@@ -37,7 +37,12 @@ const userSchema = new mongoose.Schema({
   lastUpdate: Date,
   coins: Number,
   rating: Number,
+  profilePicture: String,
   document: String,
+  verfied:{
+    type: Boolean,
+     default:false
+    }
 });
 
 userSchema.virtual("id").get(function () {

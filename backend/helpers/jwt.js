@@ -57,6 +57,14 @@ function authJwt() {
         url: `${api}/cardTypes`,
         methods: ["POST", "OPTIONS"],
       },
+      {
+        url: `${api}/users/`,
+        methods: ["POST", "OPTIONS"],
+      },
+      {
+        url: `${api}/categories/`,
+        methods: ["POST", "OPTIONS"],
+      },
 
     ],
   });

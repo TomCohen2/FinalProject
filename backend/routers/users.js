@@ -15,33 +15,41 @@ router.get(`/`, async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const user = await User.findById(req.params.id).select("-password");
+  const user = await User.findById(req.params.id);
   if (!user) {
     res.status(500).json({
       success: false,
       message: "User not found",
     });
   }
-  res.send(user);
+  console.log(user);
+  res.status(200).send(user);
 });
 
 router.post("/", async (req, res) => {
   let user = new User({
-    username: req.body.username,
+    // username: req.body.username,
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 10),
     address: req.body.address,
+    latAndLong: req.body.latAndLong,
     phone: req.body.phone,
     isAdmin: req.body.isAdmin,
+    profilePicutre : req.body.profilePicutre,
+    coins: 0,
+    rating: 0,
+    document: "",
+    verified: false,
     lastUpdate: Date.now(),
+    createdAt: Date.now()
   });
   user = await user.save();
   if (!user) {
     return res.status(500).send("Error creating user");
   }
-  return res.status(201).send(user);
+  return res.status(200).send(user);
 });
 
 router.put("/:id", async (req, res) => {

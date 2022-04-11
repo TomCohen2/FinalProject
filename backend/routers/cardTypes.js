@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 
 router.get(`/`, async (req, res) => {
-    const cardTypesList = await CardType.find().populate("category");
+    const cardTypesList = await CardType.find();
     if (!cardTypesList) {
       res.status(500).json({
         success: false,
@@ -17,15 +17,14 @@ router.get(`/`, async (req, res) => {
 
 
 router.post(`/`, async (req, res) => { //todo add validation of category
-
     let cardType = new CardType({
       name: req.body.name,
-      category: req.body.category,
+      categories: req.body.categories,
     });
   
     cardType = await cardType.save();
     if (!cardType) {
-      return res.status(500).send("Error creating coin Transaction");
+      return res.status(500).send("Error creating cardType");
     }
     return res.status(201).send(cardType);
   });
