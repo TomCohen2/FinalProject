@@ -4,24 +4,51 @@ const Card = require("../models/card");
 const Category = require("../models/category");
 const mongoose = require("mongoose");
 
+
+function getCalculatedPrice(cardPrice, cardExpirationDate){
+  return cardPrice-5;
+}
+
+function getPrecentageSaved(cardCalculatedPrice,cardValue){
+  const cardPrecentageSaved = (1 - cardCalculatedPrice / cardValue) * 100;
+  return cardPrecentageSaved.toFixed(2) + "%";
+}
+
 router.get(`/`, async (req, res) => {
-  const cardsList = await Card.find();
-  if (!cardsList) {
+  let allcardsList = await Card.find();
+  if (!allcardsList) {
     res.status(500).json({
       success: false,
     });
   }
-
-  res.send(cardsList);
+  allcardsList.map(card=>{
+    card.calculatedPrice = getCalculatedPrice(card.price, card.expirationDate);
+    card.precentageSaved = getPrecentageSaved(card.calculatedPrice,card.value);  
+  })
+  res.send(allcardsList.filter(c=>c.isDeleted==false));
 });
+
+router.get(`/owner/:id`, async (req, res) => {
+  let allcardsList = await Card.find();
+  if (!allcardsList) {
+    res.status(500).json({
+      success: false,
+    });
+  }
+  
+  allcardsList.map(card=>{
+    card.calculatedPrice = getCalculatedPrice(card.price, card.expirationDate);
+    card.precentageSaved = getPrecentageSaved(card.calculatedPrice,card.value);  
+  })
+
+  res.send(allcardsList.filter(c=>c.isDeleted==false).filter(c=>c.owner._id.toString() == req.params.id));
+});
+
 
 router.get("/:id", async (req, res) => {
   const card = await Card.findById(req.params.id);
-  const cardCalculatedPrice = card.price - 5;
-  card.calculatedPrice = cardCalculatedPrice;
-  const cardPrecentageSaved = (1 - card.calculatedPrice / card.value) * 100;
-  const result = cardPrecentageSaved.toFixed(2) + "%";
-  card.precentageSaved = result;
+  card.calculatedPrice = getCalculatedPrice(card.price, card.expirationDate);
+  card.precentageSaved = getPrecentageSaved(card.calculatedPrice,card.value);
 
   if (!card) {
     res.status(500).json({
@@ -61,12 +88,9 @@ router.post(`/`, async (req, res) => {
   if (!card) {
     return res.status(500).send("Error creating card");
   }
-  //TODO REMOVE THIS AND MOVE TO FUNCTION
-  const cardCalculatedPrice = card.price - 5;
-  card.calculatedPrice = cardCalculatedPrice;
-  const cardPrecentageSaved = (1 - card.calculatedPrice / card.value) * 100;
-  const result = cardPrecentageSaved.toFixed(2) + "%";
-  card.precentageSaved = result;
+
+  card.calculatedPrice = getCalculatedPrice(card.price, card.expirationDate);
+  card.precentageSaved = getPrecentageSaved(card.calculatedPrice,card.value);
 
   return res.status(200).send(card);
 });

@@ -151,7 +151,7 @@ router.post("/login", async (req, res) => {
       latAndLong: user.latAndLong,
       coins: user.coins,
       rating: user.rating,
-      profilePicutre: user.profilePicutre,
+      profilePicture: user.profilePicture,
       document: user.document,
       verified: user.verified
     });
