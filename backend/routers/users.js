@@ -199,7 +199,7 @@ router.post("/refreshToken/:id", (req, res) => {
         { id: user._id, isAdmin: user.isAdmin },
         process.env.JWT_SECRET,
         {
-          expiresIn: "1d",
+          expiresIn: process.env.JWT_EXP,
         }
       );
 
