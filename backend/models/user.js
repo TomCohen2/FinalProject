@@ -42,7 +42,11 @@ const userSchema = new mongoose.Schema({
   verified:{
     type: Boolean,
      default:false
-    }
+    },
+  tokens: {
+    type:[String]
+  }
+
 });
 
 userSchema.virtual("id").get(function () {

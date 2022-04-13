@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Category = require("../models/category");
+const authenticate = require("../helpers/auth");
 
-router.get(`/`, async (req, res) => {
+router.get(`/`,authenticate, async (req, res) => {
   let categoriesList = await Category.find();
   if (!categoriesList) {
     res.status(500).json({
@@ -13,7 +14,7 @@ router.get(`/`, async (req, res) => {
   res.status(200).send(categoriesList);
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id",authenticate, async (req, res) => {
   const category = await Category.findById(req.params.id);
   if (!category) {
     res.status(500).json({
@@ -24,7 +25,7 @@ router.get("/:id", async (req, res) => {
   res.send(category);
 });
 
-router.post(`/`, (req, res) => {
+router.post(`/`,authenticate, (req, res) => {
   const category = new Category({
     name: req.body.name,
     icon: req.body.icon,
@@ -42,7 +43,7 @@ router.post(`/`, (req, res) => {
     });
 });
 
-router.put(`/:id`, async (req, res) => {
+router.put(`/:id`,authenticate, async (req, res) => {
   const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
@@ -53,19 +54,6 @@ router.put(`/:id`, async (req, res) => {
     });
   }
   res.send(category);
-});
-
-router.delete(`/:id`, async (req, res) => {
-  const category = await Category.findById(req.params.id);
-  if (!category) {
-    res.status(500).json({
-      success: false,
-    });
-  }
-  category.remove();
-  res.status(200).json({
-    success: true,
-  });
 });
 
 module.exports = router;

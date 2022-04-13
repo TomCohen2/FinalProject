@@ -3,6 +3,7 @@ const router = express.Router();
 const Card = require("../models/card");
 const Category = require("../models/category");
 const mongoose = require("mongoose");
+const authenticate = require("../helpers/auth");
 
 
 function getCalculatedPrice(cardPrice, cardExpirationDate){
@@ -14,7 +15,7 @@ function getPrecentageSaved(cardCalculatedPrice,cardValue){
   return cardPrecentageSaved.toFixed(2) + "%";
 }
 
-router.get(`/`, async (req, res) => {
+router.get(`/`, authenticate, async (req, res, next) => {
   let allcardsList = await Card.find();
   if (!allcardsList) {
     res.status(500).json({
@@ -28,7 +29,7 @@ router.get(`/`, async (req, res) => {
   res.send(allcardsList.filter(c=>c.isDeleted==false));
 });
 
-router.get(`/owner/:id`, async (req, res) => {
+router.get(`/owner/:id`, authenticate, async (req, res) => {
   let allcardsList = await Card.find();
   if (!allcardsList) {
     res.status(500).json({
@@ -45,7 +46,7 @@ router.get(`/owner/:id`, async (req, res) => {
 });
 
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", authenticate, async (req, res) => {
   const card = await Card.findById(req.params.id);
   card.calculatedPrice = getCalculatedPrice(card.price, card.expirationDate);
   card.precentageSaved = getPrecentageSaved(card.calculatedPrice,card.value);
@@ -60,7 +61,7 @@ router.get("/:id", async (req, res) => {
 });
 
 
-router.post(`/`, async (req, res) => {
+router.post(`/`, authenticate, async (req, res) => {
   console.log(req.body)
   if (!mongoose.Types.ObjectId.isValid(req.body.cardType)) {
     return res
@@ -95,7 +96,7 @@ router.post(`/`, async (req, res) => {
   return res.status(200).send(card);
 });
 
-router.put(`/:id`, async (req, res) => {
+router.put(`/:id`, authenticate, async (req, res) => {
   const category = await Category.findById(req.body.category);
 
   if (category) {
@@ -121,15 +122,15 @@ router.put(`/:id`, async (req, res) => {
   res.send(card);
 });
 
-router.get("/get/count", async (req, res) => {
-  const cardCount = await Card.countDocuments();
-  if (!cardCount) {
-    res.status(500).json({
-      success: false,
-      message: "Count not found",
-    });
-  }
-  res.send({ cardCount: cardCount });
-});
+// router.get("/get/count", async (req, res) => {
+//   const cardCount = await Card.countDocuments();
+//   if (!cardCount) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Count not found",
+//     });
+//   }
+//   res.send({ cardCount: cardCount });
+// });
 
 module.exports = router;

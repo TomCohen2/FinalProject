@@ -3,8 +3,10 @@ const router = express.Router();
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authenticate = require("../helpers/auth");
 
-router.get(`/`, async (req, res) => {
+
+router.get(`/`, authenticate , async (req, res) => {
   const usersList = await User.find().select("-password");
   if (!usersList) {
     res.status(500).json({
@@ -14,7 +16,7 @@ router.get(`/`, async (req, res) => {
   res.send(usersList);
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", authenticate, async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) {
     res.status(500).json({
@@ -26,9 +28,9 @@ router.get("/:id", async (req, res) => {
   res.status(200).send(user);
 });
 
+// this is signup
 router.post("/", async (req, res) => {
   let user = new User({
-    // username: req.body.username,
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
@@ -43,8 +45,10 @@ router.post("/", async (req, res) => {
     document: "",
     verified: false,
     lastUpdate: Date.now(),
-    createdAt: Date.now()
+    createdAt: Date.now(),
+    tokens : []
   });
+
   user = await user.save();
   if (!user) {
     return res.status(500).send("Error creating user");
@@ -52,7 +56,7 @@ router.post("/", async (req, res) => {
   return res.status(200).send(user);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",authenticate, async (req, res) => {
   let user = await User.findById(req.params.id);
   if (!user) {
     return res.status(500).send("User not found");
@@ -121,9 +125,7 @@ router.put("/:id", async (req, res) => {
   });
 });
 
-
-
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   console.log(user);
   if (!user) {
@@ -131,17 +133,23 @@ router.post("/login", async (req, res) => {
   }
   const passwordValid = bcrypt.compareSync(req.body.password, user.password);
   if (user && passwordValid) {
-    const token = jwt.sign(
+    const accesstoken = jwt.sign(
       { id: user._id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
       {
         expiresIn: "1d",
       }
     );
+    const refreshToken = jwt.sign({id:user._id}, process.env.JWT_REFRESH_SECRET)
+    if (user.tokens == null) user.tokens = [refreshToken]
+    else user.tokens.push(refreshToken)
+    await user.save()
 
     return res.status(200).send({
       email: user.email,
-      token: token,
+      accessToken: accesstoken,
+      refreshToken: refreshToken,
+      password: user.password,
       id: user._id,
       isAdmin: user.isAdmin,
       lastName: user.lastName,
@@ -171,16 +179,84 @@ router.get("/get/count", async (req, res) => {
   res.send({ usersCount: usersCount });
 });
 
-router.delete(`/:id`, async (req, res) => {
-  const user = await User.findById(req.params.id);
-  if (!user) {
-    res.status(500).json({
-      success: false,
-    });
+router.post("/refreshToken/:id", (req, res) => {
+  authHeaders = req.headers['authorization']
+  const token = authHeaders && authHeaders.split(' ')[1]
+  if (token == null) return res.sendStatus('401')
+  jwt.verify(token, process.env.JWT_REFRESH_SECRET, async (err,userInfo)=>{
+    if (err) return res.status(403).send(err.message)
+    const userId = req.params.id
+    try{
+      let user = await User.findById(userId)
+      if (user == null) return res.status(403).send('invalid Request')
+      if(!user.tokens.includes(token)){
+        user.tokens = []
+        await user.save()
+        return res.status(403).send('invalid Request')
+      }
+
+      const accesstoken = jwt.sign(
+        { id: user._id, isAdmin: user.isAdmin },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1d",
+        }
+      );
+
+      const refreshToken = jwt.sign({id:user._id}, process.env.JWT_REFRESH_SECRET)
+      user.tokens[user.tokens.indexOf(token)] = refreshToken
+      await user.save()
+
+      res.status(200).send({
+        email: user.email,
+        accessToken: accesstoken,
+        refreshToken: refreshToken,
+        password: user.password,
+        id: user._id,
+        isAdmin: user.isAdmin,
+        lastName: user.lastName,
+        firstName: user.firstName,
+        address: user.address,
+        phone: user.phone,
+        latAndLong: user.latAndLong,
+        coins: user.coins,
+        rating: user.rating,
+        profilePicture: user.profilePicture,
+        document: user.document,
+        verified: user.verified
+      })
+
+      }catch (err){
+        res.status(403).send(err.message)
+      }
+    })
+})
+
+router.post("/logout/:id", (req, res) => {
+  authHeaders = req.headers['authorization']
+  const token = authHeaders && authHeaders.split(' ')[1]
+  if (token == null) return res.sendStatus('401')
+  jwt.verify(token, process.env.JWT_REFRESH_SECRET, async (err,userInfo)=>{
+    if (err) return res.status(403).send(err.message)
+    const userId = req.params.id
+    try{
+      let user = await User.findById(userId)
+      if (user == null) return res.status(403).send('invalid Request')
+      if(!user.tokens.includes(token)){
+        user.tokens = []
+        await user.save()
+        return res.status(403).send('invalid Request')
+      }
+      user.tokens.splice(user.tokens.indexOf(token),1)
+      await user.save()
+      res.status(200).send();
+
+    }catch (err){
+      res.status(403).send(err.message)
+    }
+
+  })
   }
-  user.remove();
-  res.status(200).json({
-    success: true,
-  });
-});
+)
+
 module.exports = router;

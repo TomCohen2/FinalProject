@@ -5,8 +5,10 @@ const card = require("../models/card");
 const CoinTransaction = require("../models/coinTransaction");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authenticate = require("../helpers/auth");
 
-router.post(`/`, async (req, res) => {
+
+router.post(`/`, authenticate,async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.body.from)) {
       return res.status(400).send("'from' User not found. Please provide an exising user first.");
     }
@@ -29,7 +31,7 @@ router.post(`/`, async (req, res) => {
     return res.status(200).send("Coin Transaction Created");
   });
 
-  router.get(`/`, async (req, res) => {
+  router.get(`/`, authenticate ,async (req, res) => {
     const cardsList = await CoinTransaction.find();
     if (!cardsList) {
       res.status(500).json({
@@ -40,7 +42,7 @@ router.post(`/`, async (req, res) => {
   });
   
 
-router.get(`/from/:id`, async (req, res) => {
+router.get(`/from/:id`, authenticate, async (req, res) => {
   const coinTransactionList = await CoinTransaction.find({ from: req.params.id });
     if (!coinTransactionList) {
       res.status(500).json({
@@ -51,7 +53,7 @@ router.get(`/from/:id`, async (req, res) => {
   });
   
 
-router.get(`/to/:id`, async (req, res) => {
+router.get(`/to/:id`, authenticate, async (req, res) => {
     const coinTransactionList = await CoinTransaction.find({ to: req.params.id });
       if (!coinTransactionList) {
         res.status(500).json({
@@ -62,7 +64,7 @@ router.get(`/to/:id`, async (req, res) => {
     });
 
 
-    router.get(`/income/:id`, async (req, res) => {
+    router.get(`/income/:id`,authenticate, async (req, res) => {
       const coinTransactionList = await CoinTransaction.find({ to: req.params.id });
         if (!coinTransactionList) {
           res.status(500).json({
@@ -79,7 +81,7 @@ router.get(`/to/:id`, async (req, res) => {
       });
 
       
-router.get(`/outcome/:id`, async (req, res) => {
+router.get(`/outcome/:id`, authenticate, async (req, res) => {
   const coinTransactionList = await CoinTransaction.find({ from: req.params.id });
     if (!coinTransactionList) {
       res.status(500).json({
@@ -96,5 +98,4 @@ router.get(`/outcome/:id`, async (req, res) => {
 
   });
     
-
   module.exports = router;
