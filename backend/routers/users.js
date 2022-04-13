@@ -100,16 +100,9 @@ router.put("/:id",authenticate, async (req, res) => {
     return res.status(500).send("Error updating user");
   }
   user = await user.save();
-  const token = jwt.sign(
-    { id: user._id, isAdmin: user.isAdmin },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "1d",
-    });
 
   return res.status(200).send({
     email: user.email,
-    token: token,
     id: user._id,
     isAdmin: user.isAdmin,
     lastName: user.lastName,
