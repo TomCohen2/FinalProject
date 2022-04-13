@@ -252,4 +252,19 @@ router.post("/logout/:id", (req, res) => {
   }
 )
 
+router.post("/coins/:id", authenticate, async (req, res) => {
+  let user = await User.findById(req.params.id);
+  if (!user) res.status(500).send("user not found")
+  if (!req.body.coins) res.status(400).send("Need coins in body Request")
+  user.coins += req.body.coins
+  user.lastUpdate = Date.now()
+  user = await user.save();
+  if (!user) {
+    return res.status(500).send("Error creating user");
+  }
+  return res.status(200).send(user);
+
+}
+)
+
 module.exports = router;
