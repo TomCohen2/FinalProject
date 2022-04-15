@@ -263,8 +263,17 @@ router.post("/coins/:id", authenticate, async (req, res) => {
     return res.status(500).send("Error creating user");
   }
   return res.status(200).send(user);
-
-}
+  }
 )
 
+router.post("/authenticate", async (req,res)=>{
+  authHeaders = req.headers['authorization']
+  const token = authHeaders && authHeaders.split(' ')[1]
+  if (token == null) return res.sendStatus('401')
+  jwt.verify(token,process.env.JWT_SECRET, (err,user)=>{
+      if (err) return res.status(403).send(false)
+      else return res.status(200).send(true)
+    })
+  }
+)
 module.exports = router;
