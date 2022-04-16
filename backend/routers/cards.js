@@ -15,6 +15,29 @@ function getPrecentageSaved(cardCalculatedPrice,cardValue){
   return cardPrecentageSaved.toFixed(2) + "%";
 }
 
+const updateCard = async (req, res) => {
+  const category = await Category.findById(req.body.category);
+  if (category) {
+    if (!mongoose.Types.ObjectId.isValid(req.body.category)) {
+      return res
+        .status(400)
+        .send("Category not found. Please add a category first.");
+    }
+  }
+  req.body.lastUpdate = Date()
+  const card = await Card.findByIdAndUpdate(req.params.id, req.body, {
+    new: true
+  });
+
+  if (!card) {
+    res.status(500).json({
+      success: false,
+      message: "card not found",
+    });
+  }
+  res.send(card);
+}
+
 router.get(`/`, authenticate, async (req, res, next) => {
   let allcardsList = await Card.find();
   if (!allcardsList) {
@@ -96,41 +119,6 @@ router.post(`/`, authenticate, async (req, res) => {
   return res.status(200).send(card);
 });
 
-router.put(`/:id`, authenticate, async (req, res) => {
-  const category = await Category.findById(req.body.category);
-
-  if (category) {
-    if (!mongoose.Types.ObjectId.isValid(req.body.category)) {
-      return res
-        .status(400)
-        .send("Category not found. Please add a category first.");
-    }
-  }
-
-  req.body.lastUpdate = Date()
-  const card = await Card.findByIdAndUpdate(req.params.id, req.body, {
-    new: true
-  });
-
-  if (!card) {
-    res.status(500).json({
-      success: false,
-      message: "card not found",
-    });
-  }
-
-  res.send(card);
-});
-
-// router.get("/get/count", async (req, res) => {
-//   const cardCount = await Card.countDocuments();
-//   if (!cardCount) {
-//     res.status(500).json({
-//       success: false,
-//       message: "Count not found",
-//     });
-//   }
-//   res.send({ cardCount: cardCount });
-// });
+router.put(`/:id`, authenticate, updateCard);
 
 module.exports = router;

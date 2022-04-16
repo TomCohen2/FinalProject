@@ -12,8 +12,8 @@ router.get(`/`, authenticate,async (req, res) => {
         success: false,
       });
     }
-  
-    res.send(cardTypesList);
+    console.log(cardTypesList)
+    res.send.status(200).send(cardTypesList);
   });
 
 

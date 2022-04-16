@@ -256,7 +256,8 @@ router.post("/logout/:id", (req, res) => {
   }
 )
 
-router.post("/coins/:id", authenticate, async (req, res) => {
+
+const addCoinToUser = async (req, res) => {
   let user = await User.findById(req.params.id);
   if (!user) res.status(500).send("user not found")
   if (!req.body.coins) res.status(400).send("Need coins in body Request")
@@ -266,9 +267,10 @@ router.post("/coins/:id", authenticate, async (req, res) => {
   if (!user) {
     return res.status(500).send("Error creating user");
   }
-  return res.status(200).send(user);
+    return res.status(200).send(user);
   }
-)
+
+router.post("/coins/:id", authenticate, addCoinToUser)
 
 router.post("/authenticate", async (req,res)=>{
   authHeaders = req.headers['authorization']
