@@ -30,6 +30,11 @@ router.get("/:id", authenticate, async (req, res) => {
 
 // this is signup
 router.post("/", async (req, res) => {
+  const u = await User.findOne({ email: req.body.email });
+  if (u) {
+    return res.status(401).send("Email already Exists");
+  }
+
   let user = new User({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -120,7 +125,6 @@ router.put("/:id",authenticate, async (req, res) => {
 
 router.post("/login", async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
-  console.log(user);
   if (!user) {
     return res.status(401).send("Invalid email or password");
   }
