@@ -4,16 +4,7 @@ const Card = require("../models/card");
 const Category = require("../models/category");
 const mongoose = require("mongoose");
 const authenticate = require("../helpers/auth");
-
-
-function getCalculatedPrice(cardPrice, cardExpirationDate){
-  return cardPrice-5;
-}
-
-function getPrecentageSaved(cardCalculatedPrice,cardValue){
-  const cardPrecentageSaved = (1 - cardCalculatedPrice / cardValue) * 100;
-  return cardPrecentageSaved.toFixed(2) + "%";
-}
+const {getCalculatedPrice, getPrecentageSaved} = require('../utils');
 
 const updateCard = async (req, res) => {
   const category = await Category.findById(req.body.category);
