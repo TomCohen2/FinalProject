@@ -13,7 +13,7 @@ router.get(`/`, authenticate,async (req, res) => {
       });
     }
     console.log(cardTypesList)
-    res.send.status(200).send(cardTypesList);
+    res.status(200).send(cardTypesList);
   });
 
 

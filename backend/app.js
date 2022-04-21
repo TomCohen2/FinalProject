@@ -6,6 +6,7 @@ const user = require("./models/user");
 const card = require("./models/card");
 const coinTransaction = require("./models/coinTransaction");
 const cardType = require("./models/cardType");
+const Rating = require("./models/rating");
 // const cardTransaction = require("./models/cardTransaction");
 const cors = require("cors");
 require("dotenv/config");
@@ -20,6 +21,7 @@ app.use(morgan("tiny"));
 const categoriesRoutes = require("./routers/categories");
 const cardsRoutes = require("./routers/cards");
 const usersRoutes = require("./routers/users");
+const ratingsRoutes = require("./routers/ratings");
 const coinTransactionsRoutes = require("./routers/coinTransactions");
 const cardTypesRoutes = require("./routers/cardTypes");
 // const cardTransactionsRoutes = require("./routers/cardTransactions");
@@ -34,7 +36,7 @@ app.use(`${api}/coinTransactions`, coinTransactionsRoutes);
 app.use(`${api}/cardTypes`, cardTypesRoutes);
 // app.use(`${api}/cardTransactions`, cardTransactionsRoutes);
 app.use(`${api}/users`, usersRoutes);
-
+app.use(`${api}/ratings`, ratingsRoutes);
 //connect to database
 mongoose
   .connect(CONNECTION_URL)
