@@ -7,14 +7,6 @@ const authenticate = require("../helpers/auth");
 const {getCalculatedPrice, getPrecentageSaved} = require('../utils');
 
 const updateCard = async (req, res) => {
-  const category = await Category.findById(req.body.category);
-  if (category) {
-    if (!mongoose.Types.ObjectId.isValid(req.body.category)) {
-      return res
-        .status(400)
-        .send("Category not found. Please add a category first.");
-    }
-  }
   req.body.lastUpdate = Date()
   const card = await Card.findByIdAndUpdate(req.params.id, req.body, {
     new: true
