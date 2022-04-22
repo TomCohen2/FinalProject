@@ -24,6 +24,7 @@ const usersRoutes = require("./routers/users");
 const ratingsRoutes = require("./routers/ratings");
 const coinTransactionsRoutes = require("./routers/coinTransactions");
 const cardTypesRoutes = require("./routers/cardTypes");
+const imagesRoutes = require("./routers/images.js")
 // const cardTransactionsRoutes = require("./routers/cardTransactions");
 
 const api = process.env.API_URL;
@@ -37,6 +38,7 @@ app.use(`${api}/cardTypes`, cardTypesRoutes);
 // app.use(`${api}/cardTransactions`, cardTransactionsRoutes);
 app.use(`${api}/users`, usersRoutes);
 app.use(`${api}/ratings`, ratingsRoutes);
+app.use(`${api}/images`, imagesRoutes);
 //connect to database
 mongoose
   .connect(CONNECTION_URL)

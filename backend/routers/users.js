@@ -93,7 +93,7 @@ router.put("/:id",authenticate, async (req, res) => {
       isAdmin: req.body.isAdmin || currentDetails.isAdmin,
       coins: req.body.coins || currentDetails.coins,
       rating: req.body.rating || currentDetails.rating ,
-      profilePicutre: req.body.profilePicture || currentDetails.profilePicture,
+      profilePicture: req.body.profilePicture || currentDetails.profilePicture,
       document: req.body.document || currentDetails.document,
       verified: req.body.verified || currentDetails.verified,
       lastUpdate: Date.now(),
