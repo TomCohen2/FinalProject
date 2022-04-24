@@ -24,7 +24,7 @@ router.get("/:id", authenticate, async (req, res) => {
       message: "User not found",
     });
   }
-  console.log(user);
+  // console.log(user);
   res.status(200).send(user);
 });
 

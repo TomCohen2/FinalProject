@@ -68,7 +68,7 @@ router.get("/:id", authenticate, async (req, res) => {
 
 
 router.post(`/`, authenticate, async (req, res) => {
-  console.log(req.body)
+  // console.log(req.body)
   if (!mongoose.Types.ObjectId.isValid(req.body.cardType)) {
     return res
       .status(400)

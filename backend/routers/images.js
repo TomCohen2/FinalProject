@@ -31,7 +31,7 @@ router.post('/upload/:id', authenticate, (req, res) => {
         } else {
             let currentFilePath = __dirname + "/../images/" + req.file.filename
             let newName = currentFilePath.replace(req.file.filename,req.params.id) + ".jpeg"
-            console.log(currentFilePath)
+            // console.log(currentFilePath)
 
             fs.unlink(newName, function(err) {
                 if(err && err.code == 'ENOENT') {
@@ -60,14 +60,14 @@ router.get('/:imagename', (req, res) => {
     let imagename = req.params.imagename
     let imagepath = __dirname + "/../images/" + imagename
     let image = fs.readFileSync(imagepath)
-    console.log(imagepath)
+    // console.log(imagepath)
     let mime = _mime.lookup(imagepath)
-    console.log(mime)
-    console.log(image)
+    // console.log(mime)
+    // console.log(image)
 	res.writeHead(200, {'Content-Type': mime })
 	res.end(image, 'binary')
     // res.status(200).send(image,'binary')
-    console.log(res)
+    // console.log(res)
 })
 
 module.exports = router
