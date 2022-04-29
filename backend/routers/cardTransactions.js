@@ -17,7 +17,7 @@ router.post("/", authenticate,async (req, res) => { //add checkups for parameter
       if (!ct) {
         return res.status(500).send("Error creating cardType");
       }
-      return res.status(201).send(ct);
+      return res.status(200).send(ct);
 
   })
 
@@ -41,6 +41,20 @@ router.get("/buyer/:id", authenticate,async (req, res) => {
     res.send(l);
 
 })
+
+
+router.get("/:user_id", authenticate,async (req, res) => {
+  const l = await CardTransaction.find({ buyer: req.params.user_id });
+  const l2 = await CardTransaction.find({ seller: req.params.user_id });
+  if (!l || !l2) {
+    res.status(500).json({
+      success: false,
+    });
+  }
+  l2.forEach(c=>{l.push(c)})
+  res.send(l);
+})
+
 
 router.get("/card/:id", authenticate,async (req, res) => {
     const l = await CardTransaction.find({ card: req.params.id });
