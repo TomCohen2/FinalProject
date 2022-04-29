@@ -50,7 +50,6 @@ describe('Register and login', () => {
         const response = await request(app)
         .get(`/api/v1/users/${owner}`)
         .set({ authorization: 'JWT ' + accessToken })
-        console.log(response.body)
       expect(response.statusCode).toEqual(200)
     })
     test('getting cards with access token', async () => {
@@ -59,20 +58,20 @@ describe('Register and login', () => {
         .set({ authorization: 'JWT ' + accessToken })
       expect(response.statusCode).toEqual(200)
     }),
-    test('get all catagories', async () => {
+    test('get all card types', async () => {
       const response = await request(app)
-        .get('/api/v1/categories')
+        .get('/api/v1/cardTypes')
         .set({ authorization: 'JWT ' + accessToken })
         cardType = response.body[0].id;
     expect(response.statusCode).toEqual(200);
     })
-     test('add a cards', async () => {
+     test('add a card', async () => {
       const response = await request(app)
         .post('/api/v1/cards')
         .set({ authorization: 'JWT ' + accessToken })
         .send({
-          price: 100,
-          value: 120,
+          price: 200,
+          value: 250,
           cardNumber: 123,
           cardType: cardType,
           owner: owner,
@@ -86,7 +85,7 @@ describe('Register and login', () => {
 })
 
 test('Getting Calculated Price', () => {
-  expect(getCalculatedPrice(100)).toBe(95)
+  expect(getCalculatedPrice(100)).toBe(100)
 })
 
 test('Get precentage', () => {
