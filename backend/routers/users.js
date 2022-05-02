@@ -86,6 +86,16 @@ router.post('/logout/:id', logout)
 
 router.post('/coins/:id', authenticate, addCoinToUser)
 
+router.post('/email_check', async (req,res)=>{
+  const u = await User.findOne({ email: req.body.email });
+  if (u) {
+    return res.status(200).send({
+      email_exists : false
+    });
+  }else return res.status(200).send({email_exists:true})
+
+})
+
 router.post('/authenticate', async (req, res) => {
   authHeaders = req.headers['authorization']
   const token = authHeaders && authHeaders.split(' ')[1]
