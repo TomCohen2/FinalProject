@@ -90,9 +90,9 @@ router.post('/email_check', async (req,res)=>{
   const u = await User.findOne({ email: req.body.email });
   if (u) {
     return res.status(200).send({
-      email_exists : false
+      email_exists : true
     });
-  }else return res.status(200).send({email_exists:true})
+  }else return res.status(200).send({email_exists:false})
 
 })
 
