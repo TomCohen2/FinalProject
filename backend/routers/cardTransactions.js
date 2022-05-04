@@ -15,9 +15,10 @@ router.post("/", authenticate,async (req, res) => { //add checkups for parameter
     
       ct = await ct.save();
       if (!ct) {
-        return res.status(500).send("Error creating cardType");
+        res.status(500).send("Error creating cardType");
       }
-      return res.status(200).send(ct);
+      console.log(ct)
+      res.status(200).send(ct);
 
   })
 
@@ -69,7 +70,7 @@ router.get("/card/:id", authenticate,async (req, res) => {
 
 router.get(`/outcome/:id`, authenticate, async (req, res) => {
   const l = await CardTransaction.find({ buyer: req.params.id });
-    if (!l) {
+  if (!l) {
       res.status(500).json({
         success: false,
       });
@@ -77,7 +78,7 @@ router.get(`/outcome/:id`, authenticate, async (req, res) => {
     sum=0
     number_of_transactions=0
     l.forEach(element => {
-      sum += element.amount
+      sum += element.boughtFor
       number_of_transactions += 1          
     });
     res.send({"outcome": sum, "Transactions": number_of_transactions});
@@ -88,7 +89,7 @@ router.get(`/outcome/:id`, authenticate, async (req, res) => {
 
   router.get(`/income/:id`, authenticate, async (req, res) => {
     const l = await CardTransaction.find({ seller: req.params.id });
-      if (!l) {
+    if (!l) {
         res.status(500).json({
           success: false,
         });
@@ -96,10 +97,10 @@ router.get(`/outcome/:id`, authenticate, async (req, res) => {
       sum=0
       number_of_transactions=0
       l.forEach(element => {
-        sum += element.amount
+        sum += element.boughtFor
         number_of_transactions += 1          
       });
-      res.send({"outcome": sum, "Transactions": number_of_transactions});
+      res.send({"income": sum, "Transactions": number_of_transactions});
   
     });
   
