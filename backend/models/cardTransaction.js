@@ -23,6 +23,14 @@ const cardTransactionSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      satisfied:{
+        type: Boolean,
+        default: null
+      },
+      buyerComment: {
+        type:String,
+        default:null
+      },
       date: {
         type: Date,
       }

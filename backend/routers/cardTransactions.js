@@ -66,4 +66,42 @@ router.get("/card/:id", authenticate,async (req, res) => {
     res.send(l);
 })
 
+
+router.get(`/outcome/:id`, authenticate, async (req, res) => {
+  const l = await CardTransaction.find({ buyer: req.params.id });
+    if (!l) {
+      res.status(500).json({
+        success: false,
+      });
+    }
+    sum=0
+    number_of_transactions=0
+    l.forEach(element => {
+      sum += element.amount
+      number_of_transactions += 1          
+    });
+    res.send({"outcome": sum, "Transactions": number_of_transactions});
+
+  });
+
+
+
+  router.get(`/income/:id`, authenticate, async (req, res) => {
+    const l = await CardTransaction.find({ seller: req.params.id });
+      if (!l) {
+        res.status(500).json({
+          success: false,
+        });
+      }
+      sum=0
+      number_of_transactions=0
+      l.forEach(element => {
+        sum += element.amount
+        number_of_transactions += 1          
+      });
+      res.send({"outcome": sum, "Transactions": number_of_transactions});
+  
+    });
+  
+
 module.exports = router
