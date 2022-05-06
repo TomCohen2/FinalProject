@@ -22,6 +22,40 @@ router.post("/", authenticate,async (req, res) => { //add checkups for parameter
 
   })
 
+
+router.put("/:id", authenticate,async (req, res) => { //add checkups for parameters
+    let ct = await CardTransaction.findById(req.params.id);
+    if (!ct) {
+      return res.status(500).send("cardTransaction not found");
+    }  
+
+    ct = await CardTransaction.findByIdAndUpdate(
+    req.params.id,
+    {
+      satisfied: req.body.satisfied,
+      buyerComment: req.body.buyerComment,
+    },
+
+    { new: true }
+  );
+
+  if (!ct) {
+    return res.status(500).send("Error updating user");
+  }
+  ct = await ct.save();
+
+  return res.status(200).send({
+    id: ct._id,
+    seller: ct.seller,
+    buyer: ct.buyer,
+    card: ct.card,
+    boughtFor: ct.boughtFor,
+    satisfied: ct.satisfied,
+    buyerComment: ct.buyerComment,
+    date: ct.date
+  });
+});
+
 router.get("/seller/:id", authenticate, async (req, res) => {
     const l = await CardTransaction.find({ seller: req.params.id });
     if (!l) {
@@ -104,5 +138,17 @@ router.get(`/outcome/:id`, authenticate, async (req, res) => {
   
     });
   
+router.get("/sellerRatings/:id", authenticate, async (req, res) => {
+  let l = await CardTransaction.find({seller: req.params.id}) // total sells
+  let goodCount=0;
+  let badCount=0;
+  l.forEach(t=>{
+    if (t.satisfied == null) return;
+    else if (t.satisfied == true) goodCount+=1
+    else if (t.satisfied == false) badCount +=1;
+      
+  })
+  res.status(200).send({good: goodCount,bad:badCount,total: l.length})
 
+} )
 module.exports = router
