@@ -5,10 +5,15 @@ const mongoose = require("mongoose");
 const authenticate = require("../helpers/auth");
 
 router.post("/", authenticate,async (req, res) => { //add checkups for parameters
+    console.log(req.body)
     let ct = new CardTransaction({
         seller: req.body.seller,
+        sellerEmail: req.body.sellerEmail,
         buyer: req.body.buyer,
+        buyerEmail: req.body.buyerEmail,
         card: req.body.card,
+        cardType: req.body.cardType,
+        cardValue: req.body.cardValue,
         boughtFor: req.body.boughtFor,
         date: Date.now()
       });
@@ -47,8 +52,12 @@ router.put("/:id", authenticate,async (req, res) => { //add checkups for paramet
   return res.status(200).send({
     id: ct._id,
     seller: ct.seller,
+    sellerEmail: ct.sellerEmail,
     buyer: ct.buyer,
+    buyerEmail: ct.buyerEmail,
     card: ct.card,
+    cardType: ct.cardType,
+    cardValue: ct.cardValue,
     boughtFor: ct.boughtFor,
     satisfied: ct.satisfied,
     buyerComment: ct.buyerComment,

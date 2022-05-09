@@ -11,6 +11,11 @@ const cardTypeSchema = new mongoose.Schema({
       required: true,
       default: []
     },
+    stores:{
+      type: Array,
+      required: true,
+      default: []
+    }
 
   });
 
