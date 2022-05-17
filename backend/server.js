@@ -12,6 +12,27 @@ const cors = require("cors");
 require("dotenv/config");
 
 //middlewares
+
+if (process.env.NODE_ENV == "development") {
+  const swaggerUI = require("swagger-ui-express")
+  const swaggerJsDoc = require("swagger-jsdoc")
+  const options = {
+      definition: {
+          openapi: "3.0.0",
+          info: {
+              title: "AnyGift API",
+              version: "1.0.0",
+              description: "A simple Express API",
+          },
+          servers: [{url: "http://localhost:" + process.env.PORT,},],
+      },
+      apis: ["./routers/*.js"],
+     
+  };
+  const specs = swaggerJsDoc(options);
+  app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
+}
+
 app.use(cors());
 app.options("*", cors());
 app.use(express.json());

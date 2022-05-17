@@ -15,6 +15,64 @@ const {
   updateUser,
 } = require('../controllers/users-controllers')
 
+/**
+* @swagger
+* tags:
+*   name: User Api
+*   description: The User API
+*/
+
+/**
+* @swagger
+* components:
+*     securitySchemes:
+*        bearerAuth:
+*           type: http
+*           scheme: bearer
+*           bearerFormat: JWT
+*/
+
+/**
+* @swagger
+* components:
+*   schemas:
+*     User:
+*       type: object
+*       required:
+*         - password
+*         - email
+*         - firstName
+*         - lastName
+*         - phone
+*         - address
+*         - latAndLong
+*       properties:
+*         password:
+*           type: string
+*           description: The password
+*         email:
+*           type: string
+*           description: The email
+*         firstName:
+*           type: string
+*           description: The firstName
+*         lastName:
+*           type: string
+*           description: The lastName
+*         phone:
+*           type: string
+*           description: The phone
+*         address:
+*           type: string
+*           description: The address
+*         latAndLong:
+*           type: string
+*           description: The latAndLong
+*       example:
+*         email: 'swagger@test.com'
+*         password: 'swagger'
+*/
+
 router.get(`/`, authenticate, getAllUsers)
 
 router.get('/:id', authenticate, findUserById)
@@ -22,6 +80,29 @@ router.get('/:id', authenticate, findUserById)
 router.post('/', signup)
 
 router.put('/:id', authenticate, updateUser)
+
+/**
+* @swagger
+* /api/v1/users/login:
+*   post:
+*     summary: add new post
+*     tags: [User Api]
+*     security:
+*       - bearerAuth: []
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             $ref: '#/components/schemas/User'
+*     responses:
+*       200:
+*         description: sign-in
+*         content:
+*           application/json:
+*             schema:
+*               $ref: '#/components/schemas/User'
+*/
 
 router.post('/login', login)
 

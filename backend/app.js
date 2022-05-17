@@ -2,7 +2,10 @@ const app = require('./server');
 
 const api = process.env.API_URL;
 
-app.listen(8000, () => {
+const port=process.env.PORT;
+
+app.listen(port, () => {
   console.log(api);
-  console.log("Server started on port 8000");
+  console.log(`Server started on port ${port}`);
 });
+
