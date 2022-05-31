@@ -45,8 +45,11 @@ const userSchema = new mongoose.Schema({
     },
   tokens: {
     type:[String]
+  },
+  favorites: {
+    type: Map,
+     default: {shir: 'amud'}
   }
-
 });
 
 userSchema.virtual("id").get(function () {

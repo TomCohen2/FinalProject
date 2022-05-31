@@ -3,8 +3,10 @@ const router = express.Router();
 const Category = require("../models/category");
 const authenticate = require("../helpers/auth");
 
+
 router.get(`/`,authenticate, async (req, res) => {
   let categoriesList = await Category.find();
+  console.log('here');
   if (!categoriesList) {
     res.status(500).json({
       success: false,
@@ -44,7 +46,7 @@ router.post(`/`,authenticate, (req, res) => {
 });
 
 router.put(`/:id`,authenticate, async (req, res) => {
-  const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
+  const category = await Category.find(req.params.id, req.body, {
     new: true,
   });
   if (!category) {

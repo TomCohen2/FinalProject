@@ -16,62 +16,62 @@ const {
 } = require('../controllers/users-controllers')
 
 /**
-* @swagger
-* tags:
-*   name: User Api
-*   description: The User API
-*/
+ * @swagger
+ * tags:
+ *   name: User Api
+ *   description: The User API
+ */
 
 /**
-* @swagger
-* components:
-*     securitySchemes:
-*        bearerAuth:
-*           type: http
-*           scheme: bearer
-*           bearerFormat: JWT
-*/
+ * @swagger
+ * components:
+ *     securitySchemes:
+ *        bearerAuth:
+ *           type: http
+ *           scheme: bearer
+ *           bearerFormat: JWT
+ */
 
 /**
-* @swagger
-* components:
-*   schemas:
-*     User:
-*       type: object
-*       required:
-*         - password
-*         - email
-*         - firstName
-*         - lastName
-*         - phone
-*         - address
-*         - latAndLong
-*       properties:
-*         password:
-*           type: string
-*           description: The password
-*         email:
-*           type: string
-*           description: The email
-*         firstName:
-*           type: string
-*           description: The firstName
-*         lastName:
-*           type: string
-*           description: The lastName
-*         phone:
-*           type: string
-*           description: The phone
-*         address:
-*           type: string
-*           description: The address
-*         latAndLong:
-*           type: string
-*           description: The latAndLong
-*       example:
-*         email: 'swagger@test.com'
-*         password: 'swagger'
-*/
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - password
+ *         - email
+ *         - firstName
+ *         - lastName
+ *         - phone
+ *         - address
+ *         - latAndLong
+ *       properties:
+ *         password:
+ *           type: string
+ *           description: The password
+ *         email:
+ *           type: string
+ *           description: The email
+ *         firstName:
+ *           type: string
+ *           description: The firstName
+ *         lastName:
+ *           type: string
+ *           description: The lastName
+ *         phone:
+ *           type: string
+ *           description: The phone
+ *         address:
+ *           type: string
+ *           description: The address
+ *         latAndLong:
+ *           type: string
+ *           description: The latAndLong
+ *       example:
+ *         email: 'swagger@test.com'
+ *         password: 'swagger'
+ */
 
 router.get(`/`, authenticate, getAllUsers)
 
@@ -82,27 +82,27 @@ router.post('/', signup)
 router.put('/:id', authenticate, updateUser)
 
 /**
-* @swagger
-* /api/v1/users/login:
-*   post:
-*     summary: add new post
-*     tags: [User Api]
-*     security:
-*       - bearerAuth: []
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             $ref: '#/components/schemas/User'
-*     responses:
-*       200:
-*         description: sign-in
-*         content:
-*           application/json:
-*             schema:
-*               $ref: '#/components/schemas/User'
-*/
+ * @swagger
+ * /api/v1/users/login:
+ *   post:
+ *     summary: add new post
+ *     tags: [User Api]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: sign-in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ */
 
 router.post('/login', login)
 
@@ -167,14 +167,13 @@ router.post('/logout/:id', logout)
 
 router.post('/coins/:id', authenticate, addCoinToUser)
 
-router.post('/email_check', async (req,res)=>{
-  const u = await User.findOne({ email: req.body.email });
+router.post('/email_check', async (req, res) => {
+  const u = await User.findOne({ email: req.body.email })
   if (u) {
     return res.status(200).send({
-      email_exists : true
-    });
-  }else return res.status(200).send({email_exists:false})
-
+      email_exists: true,
+    })
+  } else return res.status(200).send({ email_exists: false })
 })
 
 router.post('/authenticate', async (req, res) => {
@@ -186,4 +185,29 @@ router.post('/authenticate', async (req, res) => {
     else return res.status(200).send(true)
   })
 })
+
+router.put('/addOne/:id', async (req, res) => {
+  const user = await User.findById(req.params.id)
+  const favObj = user.favorites.toObject({getters: true, flattenMaps: true});
+  const count = user.favorites.get(req.body.category);
+  const updatedUser = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+      favorites: {...favObj,
+        [req.body.category]: count
+          ? count + 1
+          : 1,
+      },
+    },
+  )
+
+  if (!updatedUser) {
+    res.status(500).json({
+      success: false,
+      message: 'Category not found',
+    })
+  }
+  res.send(updatedUser)
+})
+
 module.exports = router

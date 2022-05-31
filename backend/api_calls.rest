@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {"firstName": "stam",
 "lastName": "stam",
-"email":"stam@gmail.com",
+"email":"shirr@gmail.com",
 "password": "123456",
 "address": "stamaddress",
 "latAndLong": "123, 456",
@@ -23,15 +23,8 @@ Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNWVhZDZlNzE5
 
 ###
 
-POST  http://localhost:8001/api/v1/cards/
-Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNWVhZDZlNzE5YWU2NjJlMzM2ZjY0YyIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2NTA3MjI1MTYsImV4cCI6MTY1MDgwODkxNn0.81jVCc3YKAIbsTGPWFoD7Z_7sqbQfJJKGOCxCb-JSZs
+PUT http://localhost:8001/api/v1/users/addOne/625ead6e719ae662e336f64c
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNWVhZDZlNzE5YWU2NjJlMzM2ZjY0YyIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2NTM5Mzk4MzYsImV4cCI6MTY1NDAyNjIzNn0.lT_c1yl7-MZaMRcqyZLQreb5qmhh4nZTYTEewZVVeJQ
 Content-Type: application/json
 
-{"cardType":"62532859427c06ccbf55d31e",
-"owner": "6256a44c1e29497041970877",
-"expirationDate": "1650724691030",
- "price": 100,
- "value": 120,
- "cardNumber": "12345",
- "isForSale": true
-}
+{"category": "Health"}

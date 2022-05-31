@@ -26,9 +26,10 @@ const signup = async (req, res) => {
     verified: false,
     lastUpdate: Date.now(),
     createdAt: Date.now(),
-    tokens : []
+    tokens : [],
+    favorites: {},
   });
-
+  
   user = await user.save();
   if (!user) {
     return res.status(500).send("Error creating user");
