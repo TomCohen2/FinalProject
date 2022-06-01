@@ -87,7 +87,7 @@ router.get("/buyer/:id", authenticate,async (req, res) => {
 })
 
 
-router.get("/:user_id", authenticate,async (req, res) => {
+router.get("/user/:user_id", authenticate,async (req, res) => {
   const l = await CardTransaction.find({ buyer: req.params.user_id });
   const l2 = await CardTransaction.find({ seller: req.params.user_id });
   if (!l || !l2) {
@@ -96,6 +96,17 @@ router.get("/:user_id", authenticate,async (req, res) => {
     });
   }
   l2.forEach(c=>{l.push(c)})
+  res.send(l);
+})
+
+
+router.get("/transaction/:transaction_id", authenticate,async (req, res) => {
+  const l = await CardTransaction.findById(req.params.transaction_id);
+  if (!l) {
+    res.status(500).json({
+      success: false,
+    });
+  }
   res.send(l);
 })
 
