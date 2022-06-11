@@ -1,5 +1,5 @@
 ###
-Post http://localhost:8001/api/v1/users/
+Post http://localhost:8000/api/v1/users/
 Content-Type: application/json
 
 {"firstName": "stam",
@@ -11,23 +11,24 @@ Content-Type: application/json
 "phone": "123456"}
 
 ###
-Post http://localhost:8001/api/v1/users/login
+Post http://localhost:8000/api/v1/users/login
 Content-Type: application/json
 
 {"email":"stam@gmail.com",
 "password": "123456"}
 
 ###
-GET http://localhost:8001/api/v1/cards
-Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNWVhZDZlNzE5YWU2NjJlMzM2ZjY0YyIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2NTA3MjM1NDQsImV4cCI6MTY1MDgwOTk0NH0.5KAocu6uECIBSOeVFB6JCU90OwVYScQfpgvs_RfFTgo
+GET http://localhost:8000/api/v1/cardTypes
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYTQ5Yjg5MzgwNzc4NzJkNGRiZGY4MyIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2NTQ5NTQ5MTgsImV4cCI6MTY1NTA0MTMxOH0.J6FmPbHTYvrEbhVYJ5emVmf37hl2dgF1CCTU_5MyC6Q
 
 ###
 
-POST  http://localhost:8001/api/v1/cards/
-Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNWVhZDZlNzE5YWU2NjJlMzM2ZjY0YyIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2NTA3MjI1MTYsImV4cCI6MTY1MDgwODkxNn0.81jVCc3YKAIbsTGPWFoD7Z_7sqbQfJJKGOCxCb-JSZs
+POST  http://localhost:8000/api/v1/userClicks/
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYTQ5Yjg5MzgwNzc4NzJkNGRiZGY4MyIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2NTQ5NTQ5MTgsImV4cCI6MTY1NTA0MTMxOH0.J6FmPbHTYvrEbhVYJ5emVmf37hl2dgF1CCTU_5MyC6Q
 Content-Type: application/json
 
-{"cardType":"62532859427c06ccbf55d31e",
+{"cardTypeId":"62532859427c06ccbf55d31e",
+"userId" : "62a49b8938077872d4dbdf83",
 "owner": "6256a44c1e29497041970877",
 "expirationDate": "1650724691030",
  "price": 100,
