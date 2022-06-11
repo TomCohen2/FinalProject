@@ -27,8 +27,7 @@ router.get("/:id",authenticate, async (req, res) => {
 
 router.post(`/`,authenticate, (req, res) => {
   const category = new Category({
-    name: req.body.name,
-    icon: req.body.icon,
+    name: req.body.name
   });
   category
     .save()
